@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceApp.Server", "FinanceApp.Server\FinanceApp.Server.csproj", "{80D20AC2-6233-465F-AADB-F92E68F067D3}"
+EndProject
+Project("{54a90642-561a-4bb1-a94e-469adee60c69}") = "financeapp.client", "financeapp.client\financeapp.client.esproj", "{5DEA617E-1E60-47EA-A979-6891D7F8AB17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80D20AC2-6233-465F-AADB-F92E68F067D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80D20AC2-6233-465F-AADB-F92E68F067D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80D20AC2-6233-465F-AADB-F92E68F067D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80D20AC2-6233-465F-AADB-F92E68F067D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DEA617E-1E60-47EA-A979-6891D7F8AB17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DEA617E-1E60-47EA-A979-6891D7F8AB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DEA617E-1E60-47EA-A979-6891D7F8AB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DEA617E-1E60-47EA-A979-6891D7F8AB17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
