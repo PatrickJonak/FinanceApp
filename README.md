@@ -3,8 +3,8 @@ GenAI-native web app for budgeting, tracking, and finance.
 
 ## Project Setup
 
-This section explains how to set up and run the application. **Docker Compose Setup** is the preferred method. 
-**Docker Manual Setup** is intended for reference only. 
+This section explains how to set up and run the application. [Docker Compose Setup](#docker-compose-setup) 
+is the preferred method. [Docker Manual Setup](#docker-manual-setup) is intended for reference only. 
 
 
 ### Prerequisites
@@ -21,7 +21,7 @@ This section explains how to set up and run the application. **Docker Compose Se
 git clone https://github.com/PatrickJonak/FinanceApp.git
 ```
 
-### Docker Compose Setup
+### Docker Compose Setup {docker-compose-setup}
 
 1. Create the `compose.yaml` file in the project root directory `Financeapp`with the following contents, 
    if it doesn't exist:
@@ -102,7 +102,7 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
 
 [Docker CLI Reference | docker compose](https://docs.docker.com/reference/cli/docker/compose/)
 
-### Docker Manual Setup
+### Docker Manual Setup {docker-manual-setup}
 
 #### Bridge Network
 
@@ -142,7 +142,7 @@ It's crucial for enabling container-to-container communication.
 1. Create the `Dockerfile` in `Financeapp\Financeapp.Server` with the following contents, if it doesn't exist
    ([source](https://github.com/dotnet/dotnet-docker/blob/main/samples/aspnetapp/Dockerfile)):
 
-    ```dockerfile
+   ```dockerfile
    FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
    ARG TARGETARCH
    WORKDIR /source
@@ -165,7 +165,7 @@ It's crucial for enabling container-to-container communication.
    COPY --link --from=build /app .
    USER $APP_UID
    ENTRYPOINT ["./FinanceApp.Server"]
-    ```
+   ```
    
 2. **Build the container:**
 
