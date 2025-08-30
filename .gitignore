@@ -413,10 +413,6 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Other
-.DS_Store
-.idea/.idea.FinanceApp/.idea/
-
 # Logs
 logs
 npm-debug.log*
@@ -425,13 +421,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node/JS files
 node_modules
 dist
 dist-ssr
 *.local
+financeapp.client/tsconfig.app.tsbuildinfo
+financeapp.client/tsconfig.node.tsbuildinfo
 
 # Editor directories and files
-.idea
+.DS_Store
+.idea/.idea.FinanceApp/.idea/
 *.ntvs*
 *.njsproj
 *.sln
