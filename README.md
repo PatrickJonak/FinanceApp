@@ -5,7 +5,7 @@ GenAI-native web app for budgeting, tracking, and finance.
 
 This section explains how to set up and run the application. [Docker Compose Setup](#docker-compose-setup) 
 is the preferred method. [Docker Manual Setup](#docker-manual-setup) is intended for reference only. 
-
+Once the setup is completed, the application should be available at http://localhost:3000.
 
 ### Prerequisites
 
@@ -13,7 +13,7 @@ is the preferred method. [Docker Manual Setup](#docker-manual-setup) is intended
 2. [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) (If using Windows > 10)
 3. [git](https://git-scm.com/downloads)
 
-> ***Note:*** If running on Windows it is recommended to run all following commands on WSL.
+> ***Note 1:*** If running on Windows, it is recommended to run all following commands on WSL.
 
 ### Download Repository
 
@@ -252,7 +252,7 @@ It's crucial for enabling container-to-container communication.
     --tag financeapp.client \
     <PROJECT_DIR_PATH> 
     ```
-   >**Note:** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be used
+   >***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be used
    if your local system does not match the specified platform, i.e., `linux/amd64`.
 
    >***Note 2:*** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code,
