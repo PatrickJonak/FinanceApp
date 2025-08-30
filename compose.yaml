@@ -1,0 +1,28 @@
+﻿services:
+  financeapp-server:
+    image: financeapp.server
+    platform: linux/amd64
+    build:
+      context: FinanceApp.Server/
+      dockerfile: FinanceApp.Server/Dockerfile
+    restart: always
+    networks:
+      - network-frontend
+  financeapp-client:
+    image: financeapp.client
+    platform: linux/amd64
+    build:
+      context: financeapp.client/
+      dockerfile: financeapp.client/Dockerfile
+      args:
+        - SERVER_ADDRESS="http://financeapp-server:8080"
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+        - network-frontend
+
+networks:
+  network-frontend: 
+    driver: bridge
+    

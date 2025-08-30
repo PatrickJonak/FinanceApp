@@ -1,0 +1,13 @@
+.dockerignore
+.git
+.gitignore
+.env
+Dockerfile
+npm-debug.log
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo
+
+dist/
+docs/
+node_modules/
+obj/
