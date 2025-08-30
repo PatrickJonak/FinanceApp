@@ -7,7 +7,7 @@ This section explains how to set up and run the application. **Docker Compose Se
 **Docker Manual Setup** is intended for reference only. 
 
 
-### Prerequisites:
+### Prerequisites
 
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 2. [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) (If using Windows > 10)
@@ -147,23 +147,15 @@ It's crucial for enabling container-to-container communication.
    ARG TARGETARCH
    WORKDIR /source
    
-   # ORIGINAL CODE:
    # Copy project file and restore as distinct layers
-   # COPY --link *.csproj .
-   # RUN dotnet restore -a $TARGETARCH
-   #
-   # Copy source code and publish app
-   #COPY --link . .
-   #RUN dotnet publish -a $TARGETARCH -o /app # --no-restore
+   COPY --link *.csproj .
+   RUN dotnet restore -a $TARGETARCH
    
-   # UPDATED CODE:
-   # NOTE: The ORIGINAL CODE breaks when defining an alternative platform using buildx.
-   # To solve this, copy the entire source directory and publish the application in a single step.
-   # This ensures a clean restore and publish that's correctly targeted.
-   # The `dotnet publish` command automatically performs a restore if it's needed.
-   # The `dotnet restore` command automatically downloads and rebuilds declared dependencies from the `.csproj` file."
+   # Copy source code and publish app
+   # Removed `--no-restore` flag from `dotnet publish`
+   # Ensures the dependencies are built correctly when using an alternative platform with buildx.
    COPY --link . .
-   RUN dotnet publish -a $TARGETARCH -o /app # --no-restore
+   RUN dotnet publish -a $TARGETARCH -o /app
    
    # Runtime stage
    # Use the smaller ASP.NET runtime image for the final stage.
@@ -174,9 +166,6 @@ It's crucial for enabling container-to-container communication.
    USER $APP_UID
    ENTRYPOINT ["./FinanceApp.Server"]
     ```
-
-   >***Note 1:*** The Dockerfile was modified to make it compatible with `docker buildx` (See Step 2, Note 1).
-   Otherwise, uncomment the section `ORIGINAL CODE` and remove `UPDATED CODE`.
    
 2. **Build the container:**
 
