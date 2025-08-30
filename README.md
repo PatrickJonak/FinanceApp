@@ -21,7 +21,7 @@ is the preferred method. [Docker Manual Setup](#docker-manual-setup) is intended
 git clone https://github.com/PatrickJonak/FinanceApp.git
 ```
 
-### Docker Compose Setup {docker-compose-setup}
+### Docker Compose Setup {#docker-compose-setup}
 
 1. Create the `compose.yaml` file in the project root directory `Financeapp`with the following contents, 
    if it doesn't exist:
@@ -102,7 +102,7 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
 
 [Docker CLI Reference | docker compose](https://docs.docker.com/reference/cli/docker/compose/)
 
-### Docker Manual Setup {docker-manual-setup}
+### Docker Manual Setup {#docker-manual-setup}
 
 #### Bridge Network
 
