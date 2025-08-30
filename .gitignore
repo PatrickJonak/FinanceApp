@@ -415,7 +415,8 @@ FodyWeavers.xsd
 
 # Other
 .DS_Store
-.idea/
+.idea/idea.FinanceApp/.idea/
+
 # Logs
 logs
 npm-debug.log*
