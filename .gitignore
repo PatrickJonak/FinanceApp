@@ -415,7 +415,7 @@ FodyWeavers.xsd
 
 # Other
 .DS_Store
-.idea/idea.FinanceApp/.idea/
+.idea/.idea.FinanceApp/.idea/
 
 # Logs
 logs
