@@ -3,6 +3,105 @@ GenAI-native web app for budgeting, tracking, and finance.
 
 ## Project Setup
 
+This section explains how to set up and run the application. **Docker Compose Setup** is the preferred method. 
+**Docker Manual Setup** is intended for reference only. 
+
+
+### Prerequisites:
+
+1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+2. [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) (If using Windows > 10)
+3. [git](https://git-scm.com/downloads)
+
+> ***Note:*** If running on Windows it is recommended to run all following commands on WSL.
+
+### Download Repository
+
+```bash
+git clone https://github.com/PatrickJonak/FinanceApp.git
+```
+
+### Docker Compose Setup
+
+1. Create the `compose.yaml` file in the project root directory `Financeapp`with the following contents, 
+   if it doesn't exist:
+
+   ```yaml
+   services:
+      financeapp-server:
+        image: financeapp.server
+        platform: linux/amd64
+        build:
+          context: FinanceApp.Server/
+          dockerfile: FinanceApp.Server/Dockerfile
+        restart: always
+        networks:
+          - network-frontend
+      financeapp-client:
+        image: financeapp.client
+        platform: linux/amd64
+        build:
+          context: financeapp.client/
+          dockerfile: financeapp.client/Dockerfile
+          args:
+            - SERVER_ADDRESS="http://financeapp-server:8080"
+        restart: always
+        ports:
+        - "127.0.0.1:3000:3000"
+        networks:
+        - network-frontend
+      
+      networks:
+        network-frontend:
+          driver: bridge
+   ```
+   
+2. To run the service:
+
+   ```bash
+    docker compose up --detach
+   ```
+
+3. To stop the service, without removing:
+
+   ```bash
+    docker compose stop
+   ```
+   
+4. To start the service again:
+
+   ```bash
+    docker compose start
+   ```
+   
+5. To check the status of the service:
+
+   ```bash
+    docker compose ps
+   ```
+   
+6. To monitor the log output:
+   
+   ```bash
+   docker compose logs
+   ```
+
+7. To stop and remove the service:
+
+   ```bash
+    docker compose down
+   ```
+
+#### Docker Compose Setup Sources
+
+[How Docker Compose Works](https://docs.docker.com/compose/intro/compose-application-model/)
+
+[Docker Compose Quickstart](https://docs.docker.com/compose/gettingstarted/)
+
+[Docker Compose File Reference](https://docs.docker.com/reference/compose-file/)
+
+[Docker CLI Reference | docker compose](https://docs.docker.com/reference/cli/docker/compose/)
+
 ### Docker Manual Setup
 
 #### Bridge Network
@@ -13,7 +112,7 @@ It's crucial for enabling container-to-container communication.
 1. Create the network:
 
    ```bash
-   docker network create -d bridge financeapp-network
+   docker network create -d bridge financeapp-network-frontend
    ```
 2. List all networks to find `NETWORK ID`:
 
@@ -27,7 +126,7 @@ It's crucial for enabling container-to-container communication.
    docker network inspect <NETWORK_ID>
    ```
    
-#### Bridge Network Setup Sources
+##### Bridge Network Setup Sources
 
 [Docker Docs | Network Drivers](https://docs.docker.com/engine/network/drivers/)
 
@@ -40,7 +139,7 @@ It's crucial for enabling container-to-container communication.
    
 #### Financeapp.Server
 
-1. Create a Dockerfile with the following contents
+1. Create the `Dockerfile` in `Financeapp\Financeapp.Server` with the following contents, if it doesn't exist
    ([source](https://github.com/dotnet/dotnet-docker/blob/main/samples/aspnetapp/Dockerfile)):
 
     ```dockerfile
@@ -76,7 +175,7 @@ It's crucial for enabling container-to-container communication.
    ENTRYPOINT ["./FinanceApp.Server"]
     ```
 
-   ***Note 1:*** The Dockerfile was modified to make it compatible with `docker buildx` (See Step 2, Note 1).
+   >***Note 1:*** The Dockerfile was modified to make it compatible with `docker buildx` (See Step 2, Note 1).
    Otherwise, uncomment the section `ORIGINAL CODE` and remove `UPDATED CODE`.
    
 2. **Build the container:**
@@ -87,11 +186,12 @@ It's crucial for enabling container-to-container communication.
    --tag financeapp.server \
    <PROJECT_DIR_PATH>
    ```
-   ***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be used
-   if your local system does not match the specified platform, i.e., `linux/amd64`. Otherwise, just run `docker build`.
+   >***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be 
+   used if your local system does not match the specified platform, i.e., `linux/amd64`. 
+   Otherwise, just run `docker build`.
 
-   ***Note 2:*** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code.
-   If executing the command from that directory, replace it with `.`, i.e., "local directory".
+   >***Note 2:*** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code,
+   i.e., the `context`. If executing the command from that directory, replace it with `.`, i.e., "local directory".
 
 3. **Run the container:**
 
@@ -100,12 +200,12 @@ It's crucial for enabling container-to-container communication.
    --platform linux/amd64 \
    --restart always \
    --name financeapp-server \
-   --network financeapp-network \
+   --network financeapp-network-frontend \
    --detach \
    financeapp.server
    ```
 
-   **Note 1:** In order to send requests to the server from other containers, it's crucial to set the container name.
+   >**Note 1:** In order to send requests to the server from other containers, it's crucial to set the container name.
    This will be the DNS name of your container on the bridge network, otherwise you will have to use `<CONTAINER_ID>`
    or `<IP_ADDRESS>`, which are subject to change with each deployment.
 
@@ -115,7 +215,7 @@ It's crucial for enabling container-to-container communication.
     docker ps
     ```
    
-#### Financeapp.Server Setup Sources
+##### Financeapp.Server Setup Sources
 
 [Overview of SPAs](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/intro?view=aspnetcore-8.0)
 
@@ -131,7 +231,7 @@ It's crucial for enabling container-to-container communication.
 
 #### financeapp.client
 
-1. Create a Dockerfile with the following contents:
+1. Create the `Dockerfile` in `Financeapp\financeapp.client` with the following contents, if it doesn't exist:
 
     ```dockerfile
    FROM node:24
@@ -163,11 +263,14 @@ It's crucial for enabling container-to-container communication.
     --tag financeapp.client \
     <PROJECT_DIR_PATH> 
     ```
-   **Note:** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be used
+   >**Note:** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be used
    if your local system does not match the specified platform, i.e., `linux/amd64`.
 
-   **Note:** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code. 
-   If executing the command from said directory, replace it with `.`, i.e., "this directory".
+   >***Note 2:*** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code,
+   i.e., the `context`. If executing the command from that directory, replace it with `.`, i.e., "local directory".
+
+   >***Note 3:*** `<SERVER_ADDRESS>` build argument needs to be defined. Otherwise, the client will not know the endpoint
+   of the server.
 
 3. Run the container:
 
@@ -176,7 +279,7 @@ It's crucial for enabling container-to-container communication.
     --platform linux/amd64 \
     --restart always \
     --name financeapp-client \
-    --network financeapp-network \
+    --network financeapp-network-frontend \
     --publish 127.0.0.1:3000:3000 \
     --detach \
     financeapp.client
@@ -188,7 +291,7 @@ It's crucial for enabling container-to-container communication.
     docker ps
     ```
 
-#### financeapp.client Setup Sources
+##### financeapp.client Setup Sources
 
 [How to Dockerize a React App](https://www.docker.com/blog/how-to-dockerize-react-app/)
 
