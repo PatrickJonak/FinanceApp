@@ -7,7 +7,7 @@ import { env } from 'process';
 // import fs from 'fs';
 // import path from 'path';
 // import child_process from 'child_process';
-
+//
 // const baseFolder =
 //     env.APPDATA !== undefined && env.APPDATA !== ''
 //         ? `${env.APPDATA}/ASP.NET/https`
@@ -35,7 +35,6 @@ import { env } from 'process';
 //     }
 // }
 //
-// https://vitejs.dev/config/
 // export default defineConfig({
 //     plugins: [plugin()],
 //     resolve: {
@@ -45,14 +44,10 @@ import { env } from 'process';
 //     },
 //     server: {
 //         proxy: {
-//             // '^/weatherforecast': {
-//             //     target,
-//             //     secure: false
-//             // },
-//             '^/todos': {
+//             '^/weatherforecast': {
 //                 target,
 //                 secure: false
-//             }
+//             },
 //         },
 //         port: 5173,
 //         https: {
@@ -61,9 +56,6 @@ import { env } from 'process';
 //         }
 //     }
 // })
-
-//const target = "http://financeapp-server:8080";
-// const target = "http://localhost:5080";
 
 const target = env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : "http://localhost:5080";
 
@@ -88,7 +80,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/transactions': {
                 target,
                 secure: false,
                 changeOrigin: true,

@@ -17,29 +17,52 @@ if (app.Environment.IsDevelopment())
 app.UseHttpLogging();
 app.UseHttpsRedirection();
 
-var summaries = new[]
+var descriptions = new[]
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    "ACME Corp.", "Wayne Industries", "Calamity Ins.", "Electric. Co.", "CCAT"
+};
+var types = new[]
+{
+    "Direct Payment", "Withdrawal", "Debit Card"
 };
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/transactions", () =>
+{
+    var balance = Random.Shared.Next(0, 1000);
+    List<Transaction> transactions = [];
+    for (var i = 10; i > 0; i--)
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+
+        DateOnly date = DateOnly.FromDateTime(DateTime.Now.AddDays(-i));
+        var description = descriptions[Random.Shared.Next(descriptions.Length)];
+        string type;
+        int amount;
+        if (description == "CCAT")
+        {
+            amount = 1000;
+            type = "Direct Deposit";
+        }
+        else
+        {
+            amount = -Random.Shared.Next(1, 100);
+            type = types[Random.Shared.Next(0, types.Length)];         
+        }
+        balance += amount;
+        var transaction = new Transaction(
+            date,
+            description,
+            type,
+            amount,
+            balance,
+            true
+        );
+        transactions.Add(transaction);
+    }
+    return transactions;
+})
+.WithName("GetTransactions")
+.WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+record Transaction(DateOnly Date, string Description, string Type, float Amount, float Balance, bool IsPosted);

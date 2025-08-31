@@ -1,111 +1,63 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
-interface Forecast {
+interface Transaction {
     date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+    description: string;
+    type: string;
+    amount: number;
+    balance: number;
+    isPosted: boolean;
 }
 
 function App() {
-    console.log(import.meta.env.VITE_TARGET);
-    
-    const [forecasts, setForecasts] = useState<Forecast[]>();
-    
+
+    const [transactions, setTransactions] = useState<Transaction[]>();
+
     useEffect(() => {
-        populateWeatherData();
+        populateTransactionData();
     }, []);
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+    const contents = transactions === undefined
+        ? <p><em>Loading...</em></p>
         : <table className="table table-striped" aria-labelledby="tableLabel">
             <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance</th>
+                <th>Status</th>
+            </tr>
             </thead>
             <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
+            {transactions.map(transaction =>
+                <tr key={transaction.date}>
+                    <td>{transaction.date}</td>
+                    <td>{transaction.description}</td>
+                    <td>{transaction.type}</td>
+                    <td>{transaction.amount}</td>
+                    <td>{transaction.balance}</td>
+                    <td>{transaction.isPosted ? "Posted" : "Pending"}</td>
+                </tr>
+            )}
             </tbody>
         </table>;
 
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
+            <h1 id="tableLabel">Financial Transactions</h1>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
         </div>
     );
 
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        console.log(response);
+    async function populateTransactionData() {
+        const response = await fetch('transactions');
         const data = await response.json();
-        setForecasts(data);
+        setTransactions(data);
     }
 }
-
-// interface Todo {
-//     id: number;
-//     title: string;
-//     dueBy: string;
-//     isComplete: boolean;
-// }
-//
-// function App() {
-//     const [todos, setTodos] = useState<Todo[]>();
-//
-//     useEffect(() => {
-//         populateTodoData();
-//     }, []);
-//
-//     const contents = todos === undefined
-//         ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-//         : <table className="table table-striped" aria-labelledby="tableLabel">
-//             <thead>
-//             <tr>
-//                 <th>ID</th>
-//                 <th>Title</th>
-//                 <th>Due Date</th>
-//                 <th>Completed?</th>
-//             </tr>
-//             </thead>
-//             <tbody>
-//             {todos.map(todo =>
-//                 <tr key={todo.id}>
-//                     <td>{todo.id}</td>
-//                     <td>{todo.title}</td>
-//                     <td>{todo.dueBy}</td>
-//                     <td>{todo.isComplete}</td>
-//                 </tr>
-//             )}
-//             </tbody>
-//         </table>;
-//
-//     return (
-//         <div>
-//             <h1 id="tableLabel">To Do List</h1>
-//             <p>This component demonstrates fetching data from the server.</p>
-//             {contents}
-//         </div>
-//     );
-//
-//      async function populateTodoData() {
-//          const response = await fetch('todos');
-//          const data = await response.json();
-//          setTodos(data);
-//      }
-// }
 
 export default App;
