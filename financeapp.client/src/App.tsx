@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Plot  from 'react-plotly.js';
 import './App.css';
 
 interface Transaction {
@@ -12,56 +13,86 @@ interface Transaction {
 
 function App() {
 
-    // Uncomment for debugging only
-    // const apiUrl = import.meta.env.VITE_TARGET;
-    // console.log('API URL:', apiUrl);
-    
     const [transactions, setTransactions] = useState<Transaction[]>();
 
     useEffect(() => {
         populateTransactionData();
     }, []);
 
-    const contents = transactions === undefined
-        ? <p><em>Loading...</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Balance</th>
-                <th>Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            {transactions.map(transaction =>
-                <tr key={transaction.date}>
-                    <td>{transaction.date}</td>
-                    <td>{transaction.description}</td>
-                    <td>{transaction.type}</td>
-                    <td>{transaction.amount}</td>
-                    <td>{transaction.balance}</td>
-                    <td>{transaction.isPosted ? "Posted" : "Pending"}</td>
-                </tr>
-            )}
-            </tbody>
-        </table>;
-
-    return (
-        <div>
-            <h1 id="tableLabel">Financial Transactions</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
-    );
-
     async function populateTransactionData() {
         const response = await fetch('/transaction');
         const data = await response.json();
         setTransactions(data);
     }
+
+    function sliceTransactions(transactions: Transaction[], key: keyof Transaction): Plotly.Datum[] {
+        let values = []
+        for (let i = 0; i < transactions.length; i++) {
+            values.push(transactions[i][key]);
+        }
+        return values as Plotly.Datum[];
+    }
+
+    const content = transactions === undefined
+    ? <p><em>Loading...</em></p>
+    :<div id="content">
+        <Plot
+            data={[
+                {
+                    type: 'bar',
+                    name: 'Balance',
+                    x: sliceTransactions(transactions, "date"),
+                    y: sliceTransactions(transactions, "balance"),
+                    marker: {
+                        color: 'rgb(55, 83, 109)'
+                    }
+                },
+                {
+                    type: 'bar',
+                    name: 'Amount',
+                    x: sliceTransactions(transactions, "date"),
+                    y: sliceTransactions(transactions, "amount"),
+                    marker: {
+                        color: 'rgb(26, 118, 255)',
+                    }
+                }
+            ]}
+            layout={{
+                width: 1000, 
+                height: 750,
+                xaxis: {
+                    title: {
+                        text: 'Date',
+                        font: {
+                            size: 16,
+                            color: 'rgb(0,0,0)'
+                        }
+                    },
+                    tickfont: {
+                        size: 14,
+                        color: 'rgb(0,0,0)'
+                    }
+                },
+                yaxis: {
+                    tickfont: {
+                        size: 14,
+                        color: 'rgb(0,0,0)'
+                    },
+                    tickprefix: "$"
+                },
+                legend: {
+                    x: 1.0,
+                    y: 1.0,
+                    bgcolor: 'rgba(255, 255, 255, 0)',
+                    bordercolor: 'rgba(255, 255, 255, 0)'
+                },
+                barmode: 'group',
+                bargap: 0.15,
+                bargroupgap: 0.1,
+            }}
+            />
+        </div>
+    return (content);
 }
 
 export default App;
