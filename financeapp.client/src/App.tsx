@@ -12,6 +12,10 @@ interface Transaction {
 
 function App() {
 
+    // Uncomment for debugging only
+    // const apiUrl = import.meta.env.VITE_TARGET;
+    // console.log('API URL:', apiUrl);
+    
     const [transactions, setTransactions] = useState<Transaction[]>();
 
     useEffect(() => {
@@ -54,7 +58,7 @@ function App() {
     );
 
     async function populateTransactionData() {
-        const response = await fetch('transactions');
+        const response = await fetch('/transactions');
         const data = await response.json();
         setTransactions(data);
     }
