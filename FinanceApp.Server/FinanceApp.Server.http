@@ -1,6 +1,6 @@
-@FinanceApp.Server_HostAddress = http://localhost:5157
+@FinanceApp.Server_HostAddress = http://localhost:5080
 
-GET {{FinanceApp.Server_HostAddress}}/weatherforecast/
+GET {{FinanceApp.Server_HostAddress}}/transactions/
 Accept: application/json
 
 ###
