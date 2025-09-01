@@ -58,7 +58,7 @@ function App() {
     );
 
     async function populateTransactionData() {
-        const response = await fetch('/transactions');
+        const response = await fetch('/transaction');
         const data = await response.json();
         setTransactions(data);
     }

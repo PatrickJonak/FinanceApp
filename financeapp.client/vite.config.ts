@@ -80,7 +80,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/transactions': {
+            '^/transaction': {
                 target,
                 secure: false,
                 changeOrigin: true,
