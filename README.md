@@ -32,8 +32,8 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
         image: financeapp.server
         platform: linux/amd64
         build:
-          context: FinanceApp.Server/
-          dockerfile: FinanceApp.Server/Dockerfile
+          context: ./FinanceApp.Server/
+          dockerfile: Dockerfile
         restart: always
         networks:
           - network-frontend
@@ -41,8 +41,8 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
         image: financeapp.client
         platform: linux/amd64
         build:
-          context: financeapp.client/
-          dockerfile: financeapp.client/Dockerfile
+          context: ./financeapp.client/
+          dockerfile: Dockerfile
           args:
             - SERVER_ADDRESS="http://financeapp-server:8080"
         restart: always
@@ -55,38 +55,44 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
         network-frontend:
           driver: bridge
    ```
-   
-2. To run the service:
+
+2. To build the service:
+
+   ```bash
+    docker compose build
+   ```
+
+3. To run the service:
 
    ```bash
     docker compose up --detach
    ```
 
-3. To stop the service, without removing:
+4. To stop the service, without removing:
 
    ```bash
     docker compose stop
    ```
    
-4. To start the service again:
+5. To start the service again:
 
    ```bash
     docker compose start
    ```
    
-5. To check the status of the service:
+6. To check the status of the service:
 
    ```bash
     docker compose ps
    ```
    
-6. To monitor the log output:
+7. To monitor the log output:
    
    ```bash
    docker compose logs
    ```
 
-7. To stop and remove the service:
+8. To stop and remove the service:
 
    ```bash
     docker compose down
@@ -112,7 +118,7 @@ It's crucial for enabling container-to-container communication.
 1. Create the network:
 
    ```bash
-   docker network create -d bridge financeapp-network-frontend
+   docker network create -d bridge financeapp_network-frontend
    ```
 2. List all networks to find `NETWORK ID`:
 
@@ -189,7 +195,7 @@ It's crucial for enabling container-to-container communication.
    --platform linux/amd64 \
    --restart always \
    --name financeapp-server \
-   --network financeapp-network-frontend \
+   --network financeapp_network-frontend \
    --detach \
    financeapp.server
    ```
@@ -268,7 +274,7 @@ It's crucial for enabling container-to-container communication.
     --platform linux/amd64 \
     --restart always \
     --name financeapp-client \
-    --network financeapp-network-frontend \
+    --network financeapp_network-frontend \
     --publish 127.0.0.1:3000:3000 \
     --detach \
     financeapp.client
