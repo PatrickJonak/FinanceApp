@@ -3,8 +3,8 @@
     image: financeapp.server
     platform: linux/amd64
     build:
-      context: FinanceApp.Server/
-      dockerfile: FinanceApp.Server/Dockerfile
+      context: ./FinanceApp.Server/
+      dockerfile: Dockerfile
     restart: always
     networks:
       - network-frontend
@@ -12,8 +12,8 @@
     image: financeapp.client
     platform: linux/amd64
     build:
-      context: financeapp.client/
-      dockerfile: financeapp.client/Dockerfile
+      context: ./financeapp.client/
+      dockerfile: Dockerfile
       args:
         - SERVER_ADDRESS="http://financeapp-server:8080"
     restart: always
