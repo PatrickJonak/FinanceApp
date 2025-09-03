@@ -1,6 +1,6 @@
 FROM node:24
-ARG SERVER_ADDRESS
-ENV ASPNETCORE_URLS="${SERVER_ADDRESS};"
+ARG SERVER_URL
+ENV ASPNETCORE_URLS="${SERVER_URL};"
 WORKDIR /app
 
 # Copy package.json and install dependencies
