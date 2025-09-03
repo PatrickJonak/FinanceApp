@@ -3,9 +3,9 @@ GenAI-native web app for budgeting, tracking, and finance.
 
 ## Project Setup
 
-This section explains how to set up and run the application. [Docker Compose Setup](#docker-compose-setup) 
+This section explains how to set up and run the application. [Docker Bake and Compose Setup](#docker-bake-and-compose-setup) 
 is the preferred method. [Docker Manual Setup](#docker-manual-setup) is intended for reference only. 
-Once the setup is completed, the application should be available at http://localhost:3000.
+Once the setup is complete, the application should be available at http://localhost:3000.
 
 ### Prerequisites
 
@@ -13,7 +13,7 @@ Once the setup is completed, the application should be available at http://local
 2. [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) (If using Windows > 10)
 3. [git](https://git-scm.com/downloads)
 
-> ***Note 1:*** If running on Windows, it is recommended to run all following commands on WSL.
+> ***Note:*** If running on Windows, it is recommended to run all following commands on WSL.
 
 ### Download Repository
 
@@ -21,82 +21,61 @@ Once the setup is completed, the application should be available at http://local
 git clone https://github.com/PatrickJonak/FinanceApp.git
 ```
 
-### Docker Compose Setup
+### Docker Bake and Compose Setup
 
-1. Create the `compose.yaml` file in the project root directory `Financeapp`with the following contents, 
-   if it doesn't exist:
+> ***Note:*** Execute the following commands from the project root directory `FinanceApp`.
 
-   ```yaml
-   services:
-      financeapp-server:
-        image: financeapp.server
-        platform: linux/amd64
-        build:
-          context: ./FinanceApp.Server/
-          dockerfile: Dockerfile
-        restart: always
-        networks:
-          - network-frontend
-      financeapp-client:
-        image: financeapp.client
-        platform: linux/amd64
-        build:
-          context: ./financeapp.client/
-          dockerfile: Dockerfile
-          args:
-            - SERVER_ADDRESS="http://financeapp-server:8080"
-        restart: always
-        ports:
-        - "127.0.0.1:3000:3000"
-        networks:
-        - network-frontend
-      
-      networks:
-        network-frontend:
-          driver: bridge
-   ```
-
-2. To build the service:
+1. **To build the service ensure that the [docker-bake.hcl](./docker-bake.hcl) container build configuration file 
+   is present in the project root directory `Financeapp`, then execute:**
 
    ```bash
-    docker compose build
+   docker buildx build bake financeapp
    ```
-
-3. To run the service:
+   
+2. **To run the service, ensure that the [compose.yaml](./compose.yaml) container run configuration file 
+   is present in the project root directory `Financeapp`, then execute:**
 
    ```bash
     docker compose up --detach
    ```
 
-4. To stop the service, without removing:
+3. **To stop the service, without removing:**
 
    ```bash
     docker compose stop
    ```
    
-5. To start the service again:
+4. **To start the service again:**
 
    ```bash
     docker compose start
    ```
-   
-6. To check the status of the service:
+
+5. **To check the status of the service:**
 
    ```bash
     docker compose ps
    ```
-   
-7. To monitor the log output:
+
+6. **To monitor the log output:**
    
    ```bash
    docker compose logs
    ```
 
-8. To stop and remove the service:
+7. **To stop and remove the service:**
 
    ```bash
     docker compose down
    ```
+
+#### Docker Bake Setup Sources
+
+[Introduction to Bake](https://docs.docker.com/build/bake/introduction/)
+
+[Bake File Reference](https://docs.docker.com/build/bake/reference/)
+
+[Overriding Configurations](https://docs.docker.com/build/bake/reference/)
 
 #### Docker Compose Setup Sources
 
@@ -112,24 +91,30 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
 
 #### Bridge Network
 
-The bridge network allows for containers to communicate locally in an isolated environment. 
+> ***Note:*** The bridge network allows for containers to communicate locally in an isolated environment. 
 It's crucial for enabling container-to-container communication.
 
-1. Create the network:
+1. **Create the network:**
 
    ```bash
    docker network create -d bridge financeapp_network-frontend
    ```
-2. List all networks to find `NETWORK ID`:
+2. **List all networks to find `NETWORK ID`:**
 
    ```bash
    docker network ls
    ```
    
-3. Inspect the network:
+3. **Inspect the network:**
 
    ```bash
    docker network inspect <NETWORK_ID>
+   ```
+   
+4. **To clean up:**
+
+   ```bash
+   docker network rm <NETWORK_ID>
    ```
    
 ##### Bridge Network Setup Sources
@@ -145,58 +130,34 @@ It's crucial for enabling container-to-container communication.
    
 #### Financeapp.Server
 
-1. Create the `Dockerfile` in `Financeapp\Financeapp.Server` with the following contents, if it doesn't exist
-   ([source](https://github.com/dotnet/dotnet-docker/blob/main/samples/aspnetapp/Dockerfile)):
-
-   ```dockerfile
-   FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-   ARG TARGETARCH
-   WORKDIR /source
-   
-   # Copy project file and restore as distinct layers
-   COPY --link *.csproj .
-   RUN dotnet restore -a $TARGETARCH
-   
-   # Copy source code and publish app
-   # Removed `--no-restore` flag from `dotnet publish`
-   # Ensures the dependencies are built correctly when using an alternative platform with buildx.
-   COPY --link . .
-   RUN dotnet publish -a $TARGETARCH -o /app
-   
-   # Runtime stage
-   # Use the smaller ASP.NET runtime image for the final stage.
-   FROM mcr.microsoft.com/dotnet/aspnet:8.0
-   EXPOSE 8080
-   WORKDIR /app
-   COPY --link --from=build /app .
-   USER $APP_UID
-   ENTRYPOINT ["./FinanceApp.Server"]
-   ```
-   
-2. **Build the container:**
+1. **Ensure that the [Dockerfile](./FinanceApp.Server/Dockerfile) is present in `Financeapp/Financeapp.Server`, 
+   then build the container:**
 
    ```bash
    docker buildx build \
+   --build-arg DOTNET_VERSION="8.0" \
+   --build-arg PROTOCOL="http" \
+   --build-arg PORT="8080" \
    --platform linux/amd64 \
    --tag financeapp.server \
    <PROJECT_DIR_PATH>
    ```
    >***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be 
-   used if your local system does not match the specified platform, i.e., `linux/amd64`. 
-   Otherwise, just run `docker build`.
+   used if your local system does not match the specified platform, i.e., `linux/amd64`.
+   Otherwise, you can drop the `buildx` command and the `--platform` flag.
 
    >***Note 2:*** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code,
    i.e., the `context`. If executing the command from that directory, replace it with `.`, i.e., "local directory".
 
-3. **Run the container:**
+2. **Run the container:**
 
    ```bash
    docker run \
-   --platform linux/amd64 \
-   --restart always \
+   --detach \
    --name financeapp-server \
    --network financeapp_network-frontend \
-   --detach \
+   --platform linux/amd64 \
+   --restart always \
    financeapp.server
    ```
 
@@ -204,13 +165,17 @@ It's crucial for enabling container-to-container communication.
    This will be the DNS name of your container on the bridge network, otherwise you will have to use `<CONTAINER_ID>`
    or `<IP_ADDRESS>`, which are subject to change with each deployment.
 
-4. **Get the container metadata to confirm if the container launched successfully:**
+3. **Get the container metadata to confirm if the container launched successfully:**
 
     ```bash
     docker ps
     ```
    
 ##### Financeapp.Server Setup Sources
+
+[ASP.NET Sample Docker Image](https://github.com/dotnet/dotnet-docker/blob/main/samples/aspnetapp/Dockerfile)
+
+[Dotnet Docker](https://github.com/dotnet/dotnet-docker/tree/main)
 
 [Overview of SPAs](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/intro?view=aspnetcore-8.0)
 
@@ -222,52 +187,30 @@ It's crucial for enabling container-to-container communication.
 
 [.NET With React in Rider](https://rider-support.jetbrains.com/hc/en-us/community/posts/5023374925586--Net-With-React-two-seperate-projects)
 
-[Dotnet Docker](https://github.com/dotnet/dotnet-docker/tree/main)
-
 #### financeapp.client
 
-1. Create the `Dockerfile` in `Financeapp\financeapp.client` with the following contents, if it doesn't exist:
-
-    ```dockerfile
-   FROM node:24
-   ARG SERVER_ADDRESS
-   ENV ASPNETCORE_URLS="${SERVER_ADDRESS};"
-   WORKDIR /app
-   
-   # Copy package.json and install dependencies
-   COPY package*.json ./
-   RUN npm install
-   
-   # Copy the rest of your application and build
-   COPY . .
-   RUN npm run build
-   
-   # Expose the correct port
-   EXPOSE 3000
-   
-   # Run the app
-   CMD [ "npm", "run", "preview" ]
-    ```
-
-2. Build the container:
+1. **Ensure that the [Dockerfile](./financeapp.client/Dockerfile) is present in `Financeapp/financeapp.client`,
+   then build the container:**
 
     ```bash
     docker buildx build \
-    --platform linux/amd64 \
+    --build-arg NODE_VERSION="24" \
     --build-arg SERVER_ADDRESS="http://financeapp-server:8080" \
+    --platform linux/amd64 \
     --tag financeapp.client \
     <PROJECT_DIR_PATH> 
     ```
-   >***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs to be used
-   if your local system does not match the specified platform, i.e., `linux/amd64`.
+   >***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs 
+   to be used if your local system does not match the specified platform, i.e., `linux/amd64`. 
+   Otherwise, you can drop the `buildx` command and the `--platform` flag.
 
    >***Note 2:*** `<PROJECT_DIR_PATH>` is the path to the directory containing the `Dockerfile` and source code,
    i.e., the `context`. If executing the command from that directory, replace it with `.`, i.e., "local directory".
 
-   >***Note 3:*** `<SERVER_ADDRESS>` build argument needs to be defined. Otherwise, the client will not know the endpoint
-   of the server.
+   >***Note 3:*** `<SERVER_ADDRESS>` build argument needs to be defined. Otherwise, the client will not know 
+   the server endpoint.
 
-3. Run the container:
+2. **Run the container:**
 
     ```bash
     docker run \
@@ -280,7 +223,7 @@ It's crucial for enabling container-to-container communication.
     financeapp.client
     ```
 
-4. Get the container metadata to confirm if the container launched successfully:
+3. **Get the container metadata to confirm if the container launched successfully:**
 
     ```bash
     docker ps
