@@ -1,4 +1,5 @@
-﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+﻿ARG DOTNET_VERSION=8.0
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION AS build
 ARG TARGETARCH
 WORKDIR /source
 
@@ -14,8 +15,10 @@ RUN dotnet publish -a $TARGETARCH -o /app
 
 # Runtime stage
 # Use the smaller ASP.NET runtime image for the final stage.
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-EXPOSE 8080
+FROM mcr.microsoft.com/dotnet/aspnet:$DOTNET_VERSION
+ARG PROTOCOL
+ARG PORT
+ENV ASPNETCORE_URLS="${PROTOCOL}://*:${PORT};"
 WORKDIR /app
 COPY --link --from=build /app .
 USER $APP_UID
