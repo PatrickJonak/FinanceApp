@@ -29,7 +29,7 @@ git clone https://github.com/PatrickJonak/FinanceApp.git
    is present in the project root directory `Financeapp`, then execute:**
 
    ```bash
-   docker buildx build bake financeapp
+   docker buildx bake financeapp
    ```
    
 2. **To run the service, ensure that the [compose.yaml](./compose.yaml) container run configuration file 
