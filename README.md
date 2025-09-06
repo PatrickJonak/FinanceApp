@@ -135,7 +135,7 @@ It's crucial for enabling container-to-container communication.
 
    ```bash
    docker buildx build \
-   --build-arg DOTNET_VERSION=<LATEST_DOTNET_VERSION> \
+   --build-arg DOTNET_VERSION=<PROJECT_DOTNET_VERSION> \
    --build-arg PROTOCOL="http" \
    --build-arg PORT="8080" \
    --platform linux/amd64 \
@@ -194,7 +194,7 @@ It's crucial for enabling container-to-container communication.
 
     ```bash
      docker buildx build \
-    --build-arg NODE_VERSION=<LATEST_NODE_VERSION> \
+    --build-arg NODE_VERSION=<PROJECT_NODE_VERSION> \
     --build-arg SERVER_URL="http://financeapp-server:8080" \
     --platform linux/amd64 \               
     --tag financeapp.client \
