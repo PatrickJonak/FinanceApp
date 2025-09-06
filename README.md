@@ -135,7 +135,7 @@ It's crucial for enabling container-to-container communication.
 
    ```bash
    docker buildx build \
-   --build-arg DOTNET_VERSION="8.0" \
+   --build-arg DOTNET_VERSION=<LATEST_DOTNET_VERSION> \
    --build-arg PROTOCOL="http" \
    --build-arg PORT="8080" \
    --platform linux/amd64 \
@@ -193,12 +193,12 @@ It's crucial for enabling container-to-container communication.
    then build the container:**
 
     ```bash
-    docker buildx build \
-    --build-arg NODE_VERSION="24" \
-    --build-arg SERVER_ADDRESS="http://financeapp-server:8080" \
-    --platform linux/amd64 \
+     docker buildx build \
+    --build-arg NODE_VERSION=<LATEST_NODE_VERSION> \
+    --build-arg SERVER_URL="http://financeapp-server:8080" \
+    --platform linux/amd64 \               
     --tag financeapp.client \
-    <PROJECT_DIR_PATH> 
+    <CONTEXT_DIR_PATH> 
     ```
    >***Note 1:*** The `docker buildx` [command](https://docs.docker.com/reference/cli/docker/buildx/) only needs 
    to be used if your local system does not match the specified platform, i.e., `linux/amd64`. 
